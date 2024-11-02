@@ -7,6 +7,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
+import gsap from 'gsap';
 
 // Create a scene
 const scene = new THREE.Scene();
@@ -22,6 +23,7 @@ const renderer = new THREE.WebGLRenderer({
     alpha: true,
 });
 
+let model;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -53,7 +55,7 @@ rgbeLoader.load(
         const loader = new GLTFLoader();
         loader.load('./DamagedHelmet.gltf', 
         function (gltf) {
-        const model = gltf.scene;
+        model = gltf.scene; // Remove 'const' keyword here
         scene.add(model);
                     },
         undefined,
@@ -63,19 +65,26 @@ rgbeLoader.load(
     );
 });
 
-
-
-// Handle window resize
 window.addEventListener('resize', () => {
-    // Update camera aspect ratio and projection matrix
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
-    // Update renderer size
     renderer.setSize(window.innerWidth, window.innerHeight);
-
-    // Update composer size
     composer.setSize(window.innerWidth, window.innerHeight);
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (model){
+        const rotationX = ( e.clientX / window.innerWidth - 0.5) * Math.PI;
+        const rotationY = ( e.clientY / window.innerHeight - 0.5) * Math.PI;
+        
+        // Use GSAP to animate the rotation
+        gsap.to(model.rotation, {
+            x: rotationY,
+            y: rotationX,
+            duration: 0.9,
+            ease: "power1.out"
+        });
+    }
 });
 
 function animate() {

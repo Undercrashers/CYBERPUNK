@@ -13,6 +13,7 @@ html, body{
 }
 body{
   background-color: black;
+  position: relative; /* Ensure body creates a stacking context */
 }
 
 .label{
@@ -23,4 +24,15 @@ body{
   display: block;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 0; /* Ensure canvas is below the image */
+}
+
+img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: lighten; /* Apply blending mode */
+  z-index: 1; /* Ensure image is above the canvas */
 }
